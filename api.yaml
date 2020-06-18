@@ -163,7 +163,7 @@ paths:
     delete:
       tags:
         - Global Preferences Management
-      summary: Get a specific preference
+      summary: Delete a specific preference
       operationId: deletePreferenceByUuid
       parameters:
         - name: uuid
@@ -235,17 +235,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
-    put:
+  '/v1/preferences/user/{uuid}':
+    get:
       tags:
         - User Preferences Management
-      summary: Update a specific user's preferences
-      operationId: updatePreferencesForUserUuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPreferenceDto'
-        required: true
+      summary: Get a specific user's preferences
+      operationId: getPreferencesForUserUuid
+      parameters:
+        - name: uuid
+          in: path
+          description: User uuid to get preferences for
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -271,20 +274,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
-  '/v1/preferences/user/{uuid}':
-    get:
+    put:
       tags:
         - User Preferences Management
-      summary: Get a specific user's preferences
-      operationId: getPreferencesForUserUuid
+      summary: Update all of specific user's preferences
+      operationId: updatePreferencesForUserUuid
       parameters:
         - name: uuid
           in: path
-          description: User uuid to get preferences for
+          description: User uuid to set preferences list for
           required: true
           schema:
             type: string
             format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserPreferenceDto'
+        required: true
       responses:
         '200':
           description: OK
@@ -325,30 +335,8 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseContainerUserPreferenceDto'
-        '400':
-          description: Client Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-        '500':
-          description: Internal error has occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
+        '405':
+          description: Method not allowed
   #
   #
   #
@@ -452,11 +440,9 @@ components:
     UserPreferenceDto:
       type: object
       properties:
-        userUuid:
+        preferenceUuid:
           type: string
           format: uuid
-        preference:
-          $ref: '#/components/schemas/PreferenceDto'
         value:
           type: boolean
           default: false

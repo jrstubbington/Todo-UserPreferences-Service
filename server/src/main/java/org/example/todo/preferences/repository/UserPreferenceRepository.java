@@ -12,4 +12,6 @@ import java.util.UUID;
 @Repository
 public interface UserPreferenceRepository extends JpaRepository<UserPreference, Long> {
 	List<UserPreference> findAllByUserUuid(UUID uuid);
+
+	void deleteAllByPreference_Uuid(UUID uuid);
 }

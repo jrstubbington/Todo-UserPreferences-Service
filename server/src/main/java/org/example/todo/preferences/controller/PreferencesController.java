@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.UUID;
 
 @RestController
 @Api(tags = "Global Preferences Management")
@@ -25,6 +26,21 @@ public class PreferencesController implements GlobalPreferencesManagementApi {
 	@Override
 	public ResponseEntity<ResponseContainerPreferenceDto> getAllPreferences(@Min(0) @Valid Integer page, @Min(1) @Valid Integer pageSize) {
 		return ResponseEntity.ok(preferenceService.getAllPreferencesResponse(PageRequest.of(page, pageSize)));
+	}
+
+	/**
+	 * DELETE /v1/preferences/{uuid} : Get a specific preference
+	 *
+	 * @param uuid Preference uuid to delete preference for (required)
+	 * @return OK (status code 200)
+	 * or Client Error (status code 400)
+	 * or Not Found (status code 404)
+	 * or Internal error has occurred (status code 500)
+	 */
+	@Override
+	public ResponseEntity<Void> deletePreferenceByUuid(UUID uuid) throws Exception {
+		preferenceService.deletePreferenceByUuid(uuid);
+		return ResponseEntity.ok().build();
 	}
 
 	@Autowired

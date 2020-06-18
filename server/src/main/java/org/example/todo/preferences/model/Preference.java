@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,8 +18,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -47,10 +46,14 @@ public class Preference implements Serializable {
 
 	private String name;
 
+	private String description;
+
 	@Builder.Default
 	private boolean defaultValue = false;
 
 
+	@Builder.Default
+	@CreatedDate
 	private OffsetDateTime dateCreated = OffsetDateTime.now();
 
 

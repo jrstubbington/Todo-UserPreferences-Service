@@ -29,7 +29,13 @@ public class Setup {
 						.name("email")
 						.build();
 
+				Preference preference2 = Preference.builder()
+						.defaultValue(true)
+						.name("phone")
+						.build();
+
 				Preference savedPreference = preferenceRepository.saveAndFlush(preference);
+				Preference savedPreference2 = preferenceRepository.saveAndFlush(preference2);
 				log.info("{}", savedPreference);
 
 				UserPreference userPreference = UserPreference.builder()
