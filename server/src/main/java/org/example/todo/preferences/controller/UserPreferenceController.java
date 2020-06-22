@@ -19,13 +19,13 @@ import java.util.UUID;
 @Api(tags = "User Preferences Management")
 @Validated
 @Slf4j
-public class UserPreferencesController implements UserPreferencesManagementApi {
+public class UserPreferenceController implements UserPreferencesManagementApi {
 
 	private UserPreferenceService userPreferenceService;
 
 
 	/**
-	 * GET /v1/preferences/user/{uuid} : Get a specific user&#39;s preferences
+	 * GET /v1/preferences/user/{uuid} : Get a specific user's preferences
 	 *
 	 * @param uuid User uuid to get preferences for (required)
 	 * @return OK (status code 200)
@@ -40,9 +40,9 @@ public class UserPreferencesController implements UserPreferencesManagementApi {
 
 
 	/**
-	 * PUT /v1/preferences/user/{uuid} : Update all of a specific user&#39;s preferences
+	 * PUT /v1/preferences/user/{uuid} : Update all of a specific user's preferences
 	 *
-	 * @param uuid              User uuid to set preferences list for (required)
+	 * @param uuid User uuid to set preferences list for (required)
 	 * @param userPreferenceDto (required)
 	 * @return OK (status code 200)
 	 * or Client Error (status code 400)
@@ -52,7 +52,22 @@ public class UserPreferencesController implements UserPreferencesManagementApi {
 	@Override
 	public ResponseEntity<ResponseContainerUserPreferenceDto> updatePreferencesForUserUuid(UUID uuid, @Valid List<UserPreferenceDto> userPreferenceDto) {
 		userPreferenceService.updateUserPreferencesResponse(uuid, userPreferenceDto);
-		return ResponseEntity.ok(new ResponseContainerUserPreferenceDto());
+		return ResponseEntity.ok(new ResponseContainerUserPreferenceDto()); //TODO
+	}
+
+	/**
+	 * GET /v1/preferences/name/{preference_name}/user/{user_uuid} : Get a specific user's preference by the preference name
+	 *
+	 * @param userUuid User uuid to get preferences for (required)
+	 * @param preferenceName Preference name to get preferences for (required)
+	 * @return OK (status code 200)
+	 * or Client Error (status code 400)
+	 * or Not Found (status code 404)
+	 * or Internal error has occurred (status code 500)
+	 */
+	@Override
+	public ResponseEntity<ResponseContainerUserPreferenceDto> getSpecificPreferenceForUserUuidByName(UUID userUuid, String preferenceName) {
+		return ResponseEntity.ok(userPreferenceService.getUserPreferenceWithPreferenceNameResponse(userUuid, preferenceName));
 	}
 
 	@Autowired

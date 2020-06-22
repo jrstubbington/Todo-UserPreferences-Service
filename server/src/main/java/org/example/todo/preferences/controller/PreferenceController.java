@@ -3,6 +3,7 @@ package org.example.todo.preferences.controller;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.example.todo.preferences.generated.controller.GlobalPreferencesManagementApi;
+import org.example.todo.preferences.generated.dto.PreferenceDto;
 import org.example.todo.preferences.generated.dto.ResponseContainerPreferenceDto;
 import org.example.todo.preferences.service.PreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Api(tags = "Global Preferences Management")
 @Validated
 @Slf4j
-public class PreferencesController implements GlobalPreferencesManagementApi {
+public class PreferenceController implements GlobalPreferencesManagementApi {
 
 	private PreferenceService preferenceService;
 
@@ -38,9 +39,36 @@ public class PreferencesController implements GlobalPreferencesManagementApi {
 	 * or Internal error has occurred (status code 500)
 	 */
 	@Override
-	public ResponseEntity<Void> deletePreferenceByUuid(UUID uuid) throws Exception {
+	public ResponseEntity<Void> deletePreferenceByUuid(UUID uuid) {
 		preferenceService.deletePreferenceByUuid(uuid);
 		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * POST /v1/preferences/ : Create a new preference
+	 *
+	 * @param preferenceDto (required)
+	 * @return OK (status code 200)
+	 * or Client Error (status code 400)
+	 * or Internal Server Error (status code 500)
+	 */
+	@Override
+	public ResponseEntity<ResponseContainerPreferenceDto> addNewPreference(@Valid PreferenceDto preferenceDto) throws Exception {
+		return ResponseEntity.ok(preferenceService.addNewPreferenceResponse(preferenceDto));
+	}
+
+	/**
+	 * GET /v1/preferences/name/{name} : Get a specific preference by name
+	 *
+	 * @param name Preference name to get preference of (required)
+	 * @return OK (status code 200)
+	 * or Client Error (status code 400)
+	 * or Not Found (status code 404)
+	 * or Internal error has occurred (status code 500)
+	 */
+	@Override
+	public ResponseEntity<ResponseContainerPreferenceDto> getPreferenceByName(String name) {
+		return null;
 	}
 
 	@Autowired

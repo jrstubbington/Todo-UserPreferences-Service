@@ -115,7 +115,7 @@
                             <!--                            <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>-->
                             <modelPackage>org.example.todo.preferences.generated.dto</modelPackage>
                             <apiPackage>org.example.todo.preferences.generated.controller</apiPackage>
-                            <invokerPackage>org.example</invokerPackage>
+                            <invokerPackage>org.example.todo.preferences</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <generatorName>java</generatorName>

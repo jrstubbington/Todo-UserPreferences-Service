@@ -15,6 +15,7 @@ import org.springframework.util.StopWatch;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,17 @@ public class UserPreferenceService {
 
 	//TODO: Enable filtering and sorting
 	public List<UserPreference> getAllUserPreferencesForUuid(UUID uuid) {
-		return userPreferenceRepository.findAllByUserUuid(uuid);
+		List<UserPreference> userPreferences = userPreferenceRepository.findAllByUserUuid(uuid);
+
+/*		List<Preference> globalPreferences = preferenceService.getAllPreferences();
+
+		globalPreferences.stream().map(preference -> {
+			UserPreferenceDto userPreference = new UserPreferenceDto();
+			userPreference.setValue(preference.isDefaultValue());
+			userPreference.setPreferenceUuid(preference.getUuid());
+		})*/
+
+		return userPreferences;
 	}
 
 	//TODO: Enable filtering and sorting
@@ -44,7 +55,7 @@ public class UserPreferenceService {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
-		Map<UUID, Boolean> updatedUserPreferences = userPreferenceDtoList.stream().collect(Collectors.toMap(UserPreferenceDto::getPreferenceUuid, UserPreferenceDto::getValue));
+		Map<UUID, Boolean> updatedUserPreferences = userPreferenceDtoList.stream().collect(Collectors.toMap(UserPreferenceDto::getPreferenceUuid, UserPreferenceDto::getUserSelection));
 		Map<UUID, Preference> preferenceMap = preferenceService.getAllPreferences().stream().collect(Collectors.toMap(Preference::getUuid, preference -> preference));
 		Map<UUID, UserPreference> currentUserPreferences = getAllUserPreferencesForUuid(userUuid).stream()
 				.collect(Collectors.toMap(userPreference -> userPreference.getPreference().getUuid(), userPreference -> userPreference));
@@ -98,6 +109,29 @@ public class UserPreferenceService {
 	public void deleteAllUserPreferencesWithPreferenceUuid(UUID uuid) {
 		userPreferenceRepository.deleteAllByPreference_Uuid(uuid);
 		userPreferenceRepository.flush();
+	}
+
+	@Transactional
+	public UserPreference getUserPreferenceWithPreferenceName(UUID userUuid, String preferenceName) {
+		List<UserPreference> userPreferences = getAllUserPreferencesForUuid(userUuid);
+		Optional<UserPreference> selectedUserPreference = userPreferences.stream().filter(userPreference -> userPreference.getPreference().getName().equalsIgnoreCase(preferenceName)).findFirst();
+		if (!selectedUserPreference.isPresent()) {
+			Preference preference = preferenceService.getPreferenceByName(preferenceName);
+			return UserPreference.builder()
+					.preference(preference)
+					.userValue(preference.isDefaultValue())
+					.userUuid(userUuid)
+					.build();
+		}
+		else {
+			return selectedUserPreference.get();
+		}
+	}
+
+	@Transactional
+	public ResponseContainerUserPreferenceDto getUserPreferenceWithPreferenceNameResponse(UUID userUuid, String preferenceName) {
+		return ResponseUtils.convertToDtoResponseContainer(getUserPreferenceWithPreferenceName(userUuid, preferenceName), UserPreferenceDto.class, ResponseContainerUserPreferenceDto.class);
+
 	}
 
 

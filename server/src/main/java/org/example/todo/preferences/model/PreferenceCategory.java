@@ -18,22 +18,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "preferences")
+@Table(name = "preference_categories")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Preference implements Serializable {
+public class PreferenceCategory implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,27 +46,15 @@ public class Preference implements Serializable {
 
 	private String name;
 
-	private String description;
-
-	@Builder.Default
-	private boolean defaultValue = false;
-
-
 	@Builder.Default
 	@CreatedDate
 	private OffsetDateTime dateCreated = OffsetDateTime.now();
 
 
-	@OneToMany(mappedBy = "preference", fetch = FetchType.LAZY,
+	@OneToMany(mappedBy = "preferenceCategory", fetch = FetchType.LAZY,
 			cascade = CascadeType.ALL)
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	@JsonIgnore
-	private Set<UserPreference> userPreference;
-
-	@ManyToOne
-	@JoinColumn(name = "category_uuid", referencedColumnName = "uuid")
-	@ToString.Exclude
-	private PreferenceCategory preferenceCategory;
-
+	private List<Preference> preferences;
 }
